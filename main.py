@@ -36,7 +36,7 @@ def main():
             print("1. Action")
             print("2. Comedy")
             print("3. Thriller")
-            print("4. Horro")
+            print("4. Horror")
             print("5. Romance")
         elif films_choice == '2':
             print("\nFiltering by year...")
