@@ -4,6 +4,9 @@ import os
 # File used to persist "My List" between runs
 MY_LIST_FILE = "my_list.json"
 
+# text formatting for Film Titles and Synopses
+BOLD = "\033[1m"
+RESET = "\033[0m"
 
 def load_my_list():
     # Load the saved My List from disk. 
@@ -138,15 +141,15 @@ def main():
         print("4. Exit ➜]")
 
         # 4. PROMPT INPUT: Store choice in user_choice
-        user_choice = input("\nEnter your choice (1-4): ").strip()
+        user_choice = get_int_choice_retry("\nEnter your choice (1-4): ", range(1, 5))
 
         # 5. EVALUATE INPUT
         if user_choice == '1':
             # IF userChoice == 1 (Home)
             print("\n--- Trending Now 🔥 ---")
-            print("1. Stranger Things Tales From 85 |                   | New On Netflix")
-            print("2. POLONG                        | Top 10 on Netflix | New On Netflix")
-            print("3. Plastic Beauty                | Top 10 On Netflix | New On Netflix")
+            print(f"1. {BOLD}Stranger Things Tales From 85{RESET} |                   | New On Netflix")
+            print(f"2. {BOLD}POLONG{RESET}                        | Top 10 on Netflix | New On Netflix")
+            print(f"3. {BOLD}Plastic Beauty{RESET}                | Top 10 On Netflix | New On Netflix")
 
             if not ask_go_back_to_main_menu():
                 print("\nExiting program. Thank you!")
@@ -171,61 +174,61 @@ def main():
 
                 genre_choice = get_int_choice_retry("\nSelect a genre (1-5): ", range(1, 6))
 
-                if genre_choice in movies_by_genre:
-                    genre_name, movies = movies_by_genre[genre_choice]
-                    print(f"\n--- {genre_name} Movies ---")
-                    for idx, movie in enumerate(movies, start=1):
-                        print(f"{idx}. {movie}")
+                genre_name, movies = movies_by_genre[genre_choice]
+                print(f"\n--- {genre_name} Movies ---")
+                for idx, (title, synopsis) in enumerate(movies, start=1):
+                    print(f"{idx}. {BOLD}{title}{RESET}")
+                    print(f"   {synopsis}")
 
-                    # Option to add to My List
-                    add_choice = input("\nDo you want to add a movie to My List? (Enter number or 'N' to skip): ").strip()
-                    if add_choice.isdigit():
-                        idx = int(add_choice) - 1
-                        if 0 <= idx < len(movies):
-                            selected_movie = movies[idx]
-                            if selected_movie not in my_list:
-                                my_list.append(selected_movie)
-                                save_my_list(my_list)
-                                print(f"\n✓ '{selected_movie}' added to My List!")
-                            else:
-                                print(f"\n! '{selected_movie}' is already in My List.")
+                # Option to add to My List
+                add_choice = input("\nDo you want to add a movie to My List? (Enter number or 'N' to skip): ").strip()
+                if add_choice.isdigit():
+                    idx = int(add_choice) - 1
+                    if 0 <= idx < len(movies):
+                        selected_movie = movies[idx]
+                        if selected_movie not in my_list:
+                            my_list.append(selected_movie)
+                            save_my_list(my_list)
+                            print(f"\n✓ '{BOLD}{selected_movie}{RESET}' added to My List!")
                         else:
-                            print("\nInvalid movie selection.")
+                            print(f"\n! '{BOLD}{selected_movie}{RESET}' is already in My List.")
+                    else:
+                        print("\nInvalid movie selection.")
 
-                elif films_choice == '2':
-                   # IF filmsChoice == 2 (Year)
-                    print("\n--- Year Menu ---")
-                    print("1. New Releases (2024-2026)")
-                    print("2. The 2010s")
-                    print("3. Classics (Pre-2010)")
+            elif films_choice == '2':
+                # IF filmsChoice == 2 (Year)
+                print("\n--- Year Menu ---")
+                print("1. New Releases (2024-2026)")
+                print("2. The 2010s")
+                print("3. Classics (Pre-2010)")
 
-                    year_choice = get_int_choice_retry("\nSelect a time period (1-3): ", range(1, 4))
+                year_choice = get_int_choice_retry("\nSelect a time period (1-3): ", range(1, 4))
 
-                    year_name, movies = movies_by_year[year_choice]
-                    print(f"\n--- {year_name} Movies ---") 
-                    for idx, (title, synopsis) in enumerate(movies, start=1):
-                        print(f"{idx}. {title}")
-                        print(f"   {synopsis}")
+                year_name, movies = movies_by_year[year_choice]
+                print(f"\n--- {year_name} Movies ---") 
+                for idx, (title, synopsis) in enumerate(movies, start=1):
+                    print(f"{idx}. {BOLD}{title}{RESET}")
+                    print(f"   {synopsis}")
 
-                    # Option to add to My List
-                    add_choice = input("\nDo you want to add a movie to My List? (Enter number or 'N' to skip): ").strip()
-                    if add_choice.isdigit():
-                        idx = int(add_choice) - 1
-                        if 0 <= idx < len(movies):
-                            selected_movie = movies[idx][0]
-                            if selected_movie not in my_list:
-                                my_list.append(selected_movie)
-                                save_my_list(my_list)
-                                print(f"\n✓ '{selected_movie}' added to My List!")
-                            else:
-                                print(f"\n! '{selected_movie}' is already in My List.")
-
+                # Option to add to My List
+                add_choice = input("\nDo you want to add a movie to My List? (Enter number or 'N' to skip): ").strip()
+                if add_choice.isdigit():
+                    idx = int(add_choice) - 1
+                    if 0 <= idx < len(movies):
+                        selected_movie = movies[idx][0]
+                        if selected_movie not in my_list:
+                            my_list.append(selected_movie)
+                            save_my_list(my_list)
+                            print(f"\n✓ '{BOLD}{selected_movie}{RESET}' added to My List!")
                         else:
-                            print("\nInvalid selection in Films menu.")
+                            print(f"\n! '{BOLD}{selected_movie}{RESET}' is already in My List.")
 
-                if not ask_go_back_to_main_menu():
-                    print("\nExiting program. Thank you!")
-                    break
+                    else:
+                        print("\nInvalid selection in Films menu.")
+
+            if not ask_go_back_to_main_menu():
+                print("\nExiting program. Thank you!")
+                break
 
         elif user_choice == '3':
             # IF userChoice == 3 (My List)
@@ -235,7 +238,7 @@ def main():
             else:
                 print("Saved Movies/Shows:")
                 for idx, movie in enumerate(my_list, start=1):
-                    print(f"{idx}. {movie}")
+                    print(f"{idx}. {BOLD}{movie}{RESET}")
 
             if not ask_go_back_to_main_menu():
                 print("\nExiting program. Thank you!")
