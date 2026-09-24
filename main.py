@@ -101,6 +101,24 @@ def main():
         ]),
     }
 
+    # Data structure to hold movies by release-year range: each movie is (title, synopsis)
+    movies_by_year = {
+        1: ("New Releases (2024-2026)", [
+            ("The Gray Man", "{A CIA operative uncovers agency secrets and becomes the target of a sadistic ex-colleague.}"),
+            ("Leave the World Behind", "{A family's getaway is upended by strangers and a series of ominous events.}"),
+            ("Plastic Beauty", "{A woman's pursuit of perfection leads her down a dangerous and transformative path.}"),
+        ]),
+        2: ("The 2010s", [
+            ("John Wick", "{A retired hitman comes out of retirement to track down the gangsters who took everything from him.}"),
+            ("The Hangover", "{Three friends wake up from a wild bachelor party with no memory of the night and a missing groom.}"),
+            ("The Kissing Booth", "{A high schooler's first kiss with her longtime crush turns her world upside down.}"),
+        ]),
+        3: ("Classics (Pre-2010)", [
+            ("Gone Girl", "{A man becomes the prime suspect when his wife mysteriously disappears on their anniversary.}"),
+            ("The Conjuring", "{Paranormal investigators help a family terrorized by a dark presence in their farmhouse.}"),
+        ]),
+    }
+
     # Store user's saved titles (loaded from previous runs, if any)
     my_list = load_my_list()
 
@@ -138,8 +156,9 @@ def main():
             # IF userChoice == 2 (Films)
             print("\n--- Films Menu 🎬 ---")
             print("1. By Genre")
+            print("2. By Year")
 
-            films_choice = input("\nEnter your choice (1): ").strip()
+            films_choice = get_int_choice_retry("\nEnter your choice (1-2): ", range(1, 3))
 
             if films_choice == '1':
                 # IF filmsChoice == 1 (Genre)
@@ -172,15 +191,41 @@ def main():
                                 print(f"\n! '{selected_movie}' is already in My List.")
                         else:
                             print("\nInvalid movie selection.")
-                else:
-                    print("\nInvalid genre selection.")
 
-            else:
-                print("\nInvalid selection in Films menu.")
+                elif films_choice == '2':
+                   # IF filmsChoice == 2 (Year)
+                    print("\n--- Year Menu ---")
+                    print("1. New Releases (2024-2026)")
+                    print("2. The 2010s")
+                    print("3. Classics (Pre-2010)")
 
-            if not ask_go_back_to_main_menu():
-                print("\nExiting program. Thank you!")
-                break
+                    year_choice = get_int_choice_retry("\nSelect a time period (1-3): ", range(1, 4))
+
+                    year_name, movies = movies_by_year[year_choice]
+                    print(f"\n--- {year_name} Movies ---") 
+                    for idx, (title, synopsis) in enumerate(movies, start=1):
+                        print(f"{idx}. {title}")
+                        print(f"   {synopsis}")
+
+                    # Option to add to My List
+                    add_choice = input("\nDo you want to add a movie to My List? (Enter number or 'N' to skip): ").strip()
+                    if add_choice.isdigit():
+                        idx = int(add_choice) - 1
+                        if 0 <= idx < len(movies):
+                            selected_movie = movies[idx][0]
+                            if selected_movie not in my_list:
+                                my_list.append(selected_movie)
+                                save_my_list(my_list)
+                                print(f"\n✓ '{selected_movie}' added to My List!")
+                            else:
+                                print(f"\n! '{selected_movie}' is already in My List.")
+
+                        else:
+                            print("\nInvalid selection in Films menu.")
+
+                if not ask_go_back_to_main_menu():
+                    print("\nExiting program. Thank you!")
+                    break
 
         elif user_choice == '3':
             # IF userChoice == 3 (My List)
