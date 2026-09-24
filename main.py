@@ -69,11 +69,36 @@ def main():
 
     # Data structure to hold movies by genre
     movies_by_genre = {
-        '1': ("Action", ["Extraction", "Red Notice", "The Gray Man", "John Wick"]),
-        '2': ("Comedy", ["Glass Onion", "Murder Mystery", "Red Notice", "The Hangover"]),
-        '3': ("Thriller", ["Bird Box", "The Platform", "Leave the World Behind", "Gone Girl"]),
-        '4': ("Horror", ["A Classic Horror Story", "The Conjuring", "Polong", "Veronica"]),
-        '5': ("Romance", ["To All the Boys I've Loved Before", "The Kissing Booth", "Set It Up", "Plastic Beauty"])
+        1: ("Action 🕹️", [
+            ("Extraction", "{A black-ops mercenary is hired to rescue a drug lord's kidnapped son.}"),
+            ("Red Notice", "{An FBI profiler teams up with a con artist to catch the world's most wanted art thief.}"),
+            ("The Gray Man", "{A CIA operative uncovers agency secrets and becomes the target of a sadistic ex-colleague.}"),
+            ("John Wick", "{A retired hitman comes out of retirement to track down the gangsters who took everything from him.}"),
+        ]),
+        2: ("Comedy 😂", [
+            ("Glass Onion", "{Detective Benoit Blanc investigates a murder among a group of friends at a billionaire's private island.}"),
+            ("Murder Mystery", "{A New York cop and his wife become suspects when a billionaire is murdered on a yacht.}"),
+            ("Red Notice", "{An FBI profiler teams up with a con artist to catch the world's most wanted art thief.}"),
+            ("The Hangover", "{Three friends wake up from a wild bachelor party with no memory of the night and a missing groom.}"),
+        ]),
+        3: ("Thriller 🔥", [
+            ("Bird Box", "{A woman and two children make a harrowing journey blindfolded to escape an unseen entity.}"),
+            ("The Platform", "{Trapped in a vertical prison, inmates fight for food that only reaches the top few levels.}"),
+            ("Leave the World Behind", "{A family's getaway is upended by strangers and a series of ominous events.}"),
+            ("Gone Girl", "{A man becomes the prime suspect when his wife mysteriously disappears on their anniversary.}"),
+        ]),
+        4: ("Horror 👻", [
+            ("A Classic Horror Story", "{A group of strangers on a road trip find themselves trapped in a nightmare in the woods.}"),
+            ("The Conjuring", "{Paranormal investigators help a family terrorized by a dark presence in their farmhouse.}"),
+            ("Polong", "{A woman turns to a supernatural spirit for revenge, with deadly consequences.}"),
+            ("Veronica", "{A teenage girl accidentally opens a door to the supernatural during a séance.}"),
+        ]),
+        5: ("Romance 💕", [
+            ("To All the Boys I've Loved Before", "{A teen's secret love letters are accidentally sent to all her past crushes.}"),
+            ("The Kissing Booth", "{A high schooler's first kiss with her longtime crush turns her world upside down.}"),
+            ("Set It Up", "{Two overworked assistants scheme to set up their demanding bosses so they can catch a break.}"),
+            ("Plastic Beauty", "{A woman's pursuit of perfection leads her down a dangerous and transformative path.}"),
+        ]),
     }
 
     # Store user's saved titles (loaded from previous runs, if any)
@@ -125,7 +150,7 @@ def main():
                 print("4. Horror 👻")
                 print("5. Romance 💕")
 
-                genre_choice = input("\nSelect a genre (1-5): ").strip()
+                genre_choice = get_int_choice_retry("\nSelect a genre (1-5): ", range(1, 6))
 
                 if genre_choice in movies_by_genre:
                     genre_name, movies = movies_by_genre[genre_choice]
