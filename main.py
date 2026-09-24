@@ -8,19 +8,35 @@ MY_LIST_FILE = "my_list.json"
 BOLD = "\033[1m"
 RESET = "\033[0m"
 
+def clean_saved_entry(entry):
+    # Repair an old/corrupted My List entry saved by a previous buggy version of this script 
+    # Returns a plain title string.
+    if isinstance(entry, (list, tuple)) and len(entry) > 0:
+        entry = entry[0]
+    if isinstance(entry, str):
+        entry = entry.strip("{}").strip()
+    return entry
+
 def load_my_list():
-    # Load the saved My List from disk. 
+    # Load the saved My List from disk.
     # Returns an empty list if no file exists or if the file is corrupted/unreadable.
     if os.path.exists(MY_LIST_FILE):
         try:
             with open(MY_LIST_FILE, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 if isinstance(data, list):
-                    return data
+                    cleaned = [clean_saved_entry(item) for item in data]
+                    # Remove duplicates that may appear after cleaning, while keeping order
+                    seen = set()
+                    deduped = []
+                    for item in cleaned:
+                        if item not in seen:
+                            seen.add(item)
+                            deduped.append(item)
+                    return deduped
         except (json.JSONDecodeError, OSError):
             print("! Could not read saved My List file. Starting with an empty list.")
     return []
-
 
 def save_my_list(my_list):
     # Save the current My List to disk.
@@ -29,7 +45,6 @@ def save_my_list(my_list):
             json.dump(my_list, f, indent=2)
     except OSError:
         print("! Could not save My List to disk.")
-
 
 def ask_go_back_to_main_menu():
     # Ask the user if they want to return to the main menu.
@@ -57,7 +72,7 @@ def get_int_choice(prompt, valid_range):
         print(f"\nInvalid choice. Please select a number from {min(valid_range)} to {max(valid_range)}.")
         return None
 
-    return user_choice 
+    return user_choice
 
 def get_int_choice_retry(prompt, valid_range):
     # Like get_int_choice, but keeps re-prompting with the same message
@@ -66,59 +81,59 @@ def get_int_choice_retry(prompt, valid_range):
         choice = get_int_choice(prompt, valid_range)
         if choice is not None:
             return choice
-    
+
 def main():
     # 1. START PROGRAM
 
     # Data structure to hold movies by genre
     movies_by_genre = {
         1: ("Action 🕹️", [
-            ("Extraction", "{A black-ops mercenary is hired to rescue a drug lord's kidnapped son.}"),
-            ("Red Notice", "{An FBI profiler teams up with a con artist to catch the world's most wanted art thief.}"),
-            ("The Gray Man", "{A CIA operative uncovers agency secrets and becomes the target of a sadistic ex-colleague.}"),
-            ("John Wick", "{A retired hitman comes out of retirement to track down the gangsters who took everything from him.}"),
+            ("Extraction", "A black-ops mercenary is hired to rescue a drug lord's kidnapped son."),
+            ("Red Notice", "An FBI profiler teams up with a con artist to catch the world's most wanted art thief."),
+            ("The Gray Man", "A CIA operative uncovers agency secrets and becomes the target of a sadistic ex-colleague."),
+            ("John Wick", "A retired hitman comes out of retirement to track down the gangsters who took everything from him."),
         ]),
         2: ("Comedy 😂", [
-            ("Glass Onion", "{Detective Benoit Blanc investigates a murder among a group of friends at a billionaire's private island.}"),
-            ("Murder Mystery", "{A New York cop and his wife become suspects when a billionaire is murdered on a yacht.}"),
-            ("Red Notice", "{An FBI profiler teams up with a con artist to catch the world's most wanted art thief.}"),
-            ("The Hangover", "{Three friends wake up from a wild bachelor party with no memory of the night and a missing groom.}"),
+            ("Glass Onion", "Detective Benoit Blanc investigates a murder among a group of friends at a billionaire's private island."),
+            ("Murder Mystery", "A New York cop and his wife become suspects when a billionaire is murdered on a yacht."),
+            ("Red Notice", "An FBI profiler teams up with a con artist to catch the world's most wanted art thief."),
+            ("The Hangover", "Three friends wake up from a wild bachelor party with no memory of the night and a missing groom."),
         ]),
         3: ("Thriller 🔥", [
-            ("Bird Box", "{A woman and two children make a harrowing journey blindfolded to escape an unseen entity.}"),
-            ("The Platform", "{Trapped in a vertical prison, inmates fight for food that only reaches the top few levels.}"),
-            ("Leave the World Behind", "{A family's getaway is upended by strangers and a series of ominous events.}"),
-            ("Gone Girl", "{A man becomes the prime suspect when his wife mysteriously disappears on their anniversary.}"),
+            ("Bird Box", "A woman and two children make a harrowing journey blindfolded to escape an unseen entity."),
+            ("The Platform", "Trapped in a vertical prison, inmates fight for food that only reaches the top few levels."),
+            ("Leave the World Behind", "A family's getaway is upended by strangers and a series of ominous events."),
+            ("Gone Girl", "A man becomes the prime suspect when his wife mysteriously disappears on their anniversary."),
         ]),
         4: ("Horror 👻", [
-            ("A Classic Horror Story", "{A group of strangers on a road trip find themselves trapped in a nightmare in the woods.}"),
-            ("The Conjuring", "{Paranormal investigators help a family terrorized by a dark presence in their farmhouse.}"),
-            ("Polong", "{A woman turns to a supernatural spirit for revenge, with deadly consequences.}"),
-            ("Veronica", "{A teenage girl accidentally opens a door to the supernatural during a séance.}"),
+            ("A Classic Horror Story", "A group of strangers on a road trip find themselves trapped in a nightmare in the woods."),
+            ("The Conjuring", "Paranormal investigators help a family terrorized by a dark presence in their farmhouse."),
+            ("Polong", "A woman turns to a supernatural spirit for revenge, with deadly consequences."),
+            ("Veronica", "A teenage girl accidentally opens a door to the supernatural during a séance."),
         ]),
         5: ("Romance 💕", [
-            ("To All the Boys I've Loved Before", "{A teen's secret love letters are accidentally sent to all her past crushes.}"),
-            ("The Kissing Booth", "{A high schooler's first kiss with her longtime crush turns her world upside down.}"),
-            ("Set It Up", "{Two overworked assistants scheme to set up their demanding bosses so they can catch a break.}"),
-            ("Plastic Beauty", "{A woman's pursuit of perfection leads her down a dangerous and transformative path.}"),
+            ("To All the Boys I've Loved Before", "A teen's secret love letters are accidentally sent to all her past crushes."),
+            ("The Kissing Booth", "A high schooler's first kiss with her longtime crush turns her world upside down."),
+            ("Set It Up", "Two overworked assistants scheme to set up their demanding bosses so they can catch a break."),
+            ("Plastic Beauty", "A woman's pursuit of perfection leads her down a dangerous and transformative path."),
         ]),
     }
 
     # Data structure to hold movies by release-year range: each movie is (title, synopsis)
     movies_by_year = {
         1: ("New Releases (2024-2026)", [
-            ("The Gray Man", "{A CIA operative uncovers agency secrets and becomes the target of a sadistic ex-colleague.}"),
-            ("Leave the World Behind", "{A family's getaway is upended by strangers and a series of ominous events.}"),
-            ("Plastic Beauty", "{A woman's pursuit of perfection leads her down a dangerous and transformative path.}"),
+            ("The Gray Man", "A CIA operative uncovers agency secrets and becomes the target of a sadistic ex-colleague."),
+            ("Leave the World Behind", "A family's getaway is upended by strangers and a series of ominous events."),
+            ("Plastic Beauty", "A woman's pursuit of perfection leads her down a dangerous and transformative path."),
         ]),
         2: ("The 2010s", [
-            ("John Wick", "{A retired hitman comes out of retirement to track down the gangsters who took everything from him.}"),
-            ("The Hangover", "{Three friends wake up from a wild bachelor party with no memory of the night and a missing groom.}"),
-            ("The Kissing Booth", "{A high schooler's first kiss with her longtime crush turns her world upside down.}"),
+            ("John Wick", "A retired hitman comes out of retirement to track down the gangsters who took everything from him."),
+            ("The Hangover", "Three friends wake up from a wild bachelor party with no memory of the night and a missing groom."),
+            ("The Kissing Booth", "A high schooler's first kiss with her longtime crush turns her world upside down."),
         ]),
         3: ("Classics (Pre-2010)", [
-            ("Gone Girl", "{A man becomes the prime suspect when his wife mysteriously disappears on their anniversary.}"),
-            ("The Conjuring", "{Paranormal investigators help a family terrorized by a dark presence in their farmhouse.}"),
+            ("Gone Girl", "A man becomes the prime suspect when his wife mysteriously disappears on their anniversary."),
+            ("The Conjuring", "Paranormal investigators help a family terrorized by a dark presence in their farmhouse."),
         ]),
     }
 
@@ -144,7 +159,7 @@ def main():
         user_choice = get_int_choice_retry("\nEnter your choice (1-4): ", range(1, 5))
 
         # 5. EVALUATE INPUT
-        if user_choice == '1':
+        if user_choice == 1:
             # IF userChoice == 1 (Home)
             print("\n--- Trending Now 🔥 ---")
             print(f"1. {BOLD}Stranger Things Tales From 85{RESET} |                   | New On Netflix")
@@ -155,7 +170,7 @@ def main():
                 print("\nExiting program. Thank you!")
                 break
 
-        elif user_choice == '2':
+        elif user_choice == 2:
             # IF userChoice == 2 (Films)
             print("\n--- Films Menu 🎬 ---")
             print("1. By Genre")
@@ -163,7 +178,7 @@ def main():
 
             films_choice = get_int_choice_retry("\nEnter your choice (1-2): ", range(1, 3))
 
-            if films_choice == '1':
+            if films_choice == 1:
                 # IF filmsChoice == 1 (Genre)
                 print("\n--- Genre Menu ---")
                 print("1. Action 🕹️")
@@ -185,7 +200,7 @@ def main():
                 if add_choice.isdigit():
                     idx = int(add_choice) - 1
                     if 0 <= idx < len(movies):
-                        selected_movie = movies[idx]
+                        selected_movie = movies[idx][0]
                         if selected_movie not in my_list:
                             my_list.append(selected_movie)
                             save_my_list(my_list)
@@ -195,7 +210,7 @@ def main():
                     else:
                         print("\nInvalid movie selection.")
 
-            elif films_choice == '2':
+            elif films_choice == 2:
                 # IF filmsChoice == 2 (Year)
                 print("\n--- Year Menu ---")
                 print("1. New Releases (2024-2026)")
@@ -205,7 +220,7 @@ def main():
                 year_choice = get_int_choice_retry("\nSelect a time period (1-3): ", range(1, 4))
 
                 year_name, movies = movies_by_year[year_choice]
-                print(f"\n--- {year_name} Movies ---") 
+                print(f"\n--- {year_name} Movies ---")
                 for idx, (title, synopsis) in enumerate(movies, start=1):
                     print(f"{idx}. {BOLD}{title}{RESET}")
                     print(f"   {synopsis}")
@@ -222,15 +237,14 @@ def main():
                             print(f"\n✓ '{BOLD}{selected_movie}{RESET}' added to My List!")
                         else:
                             print(f"\n! '{BOLD}{selected_movie}{RESET}' is already in My List.")
-
                     else:
-                        print("\nInvalid selection in Films menu.")
+                        print("\nInvalid movie selection.")
 
             if not ask_go_back_to_main_menu():
                 print("\nExiting program. Thank you!")
                 break
 
-        elif user_choice == '3':
+        elif user_choice == 3:
             # IF userChoice == 3 (My List)
             print("\n--- My List ❤️  ---")
             if not my_list:
@@ -244,14 +258,10 @@ def main():
                 print("\nExiting program. Thank you!")
                 break
 
-        elif user_choice == '4':
+        elif user_choice == 4:
             # IF userChoice == 4 (Exit)
             print("\nExiting program. Thank you!")
             break  # Stops the loop and exits
-
-        else:
-            print("\nInvalid choice. Please select a number from 1 to 4.")
-
 
 if __name__ == "__main__":
     main()
