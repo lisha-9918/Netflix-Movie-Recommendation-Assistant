@@ -40,7 +40,30 @@ def ask_go_back_to_main_menu():
         else:
             print("Please enter 'y' or 'n'.")
 
+def get_int_choice(prompt, valid_range):
+    # Prompt for an integer choice. Catches ValueError if the user types a non-numeric value, and checks the number falls within valid_range.
+    # Returns the valid integer, or None if the user's input was invalid (caller decides whether to loop again).
+    raw = input(prompt).strip()
+    try:
+        user_choice = int(raw)
+    except ValueError:
+        print("\nInvalid input. Please enter a number.")
+        return None
 
+    if user_choice not in valid_range:
+        print(f"\nInvalid choice. Please select a number from {min(valid_range)} to {max(valid_range)}.")
+        return None
+
+    return user_choice 
+
+def get_int_choice_retry(prompt, valid_range):
+    # Like get_int_choice, but keeps re-prompting with the same message
+    # until the user enters a valid number, instead of giving up after one try.
+    while True:
+        choice = get_int_choice(prompt, valid_range)
+        if choice is not None:
+            return choice
+    
 def main():
     # 1. START PROGRAM
 
@@ -77,7 +100,7 @@ def main():
         # 5. EVALUATE INPUT
         if user_choice == '1':
             # IF userChoice == 1 (Home)
-            print("\n--- Trending Now 🔥---")
+            print("\n--- Trending Now 🔥 ---")
             print("1. Stranger Things Tales From 85 |                   | New On Netflix")
             print("2. POLONG                        | Top 10 on Netflix | New On Netflix")
             print("3. Plastic Beauty                | Top 10 On Netflix | New On Netflix")
@@ -88,7 +111,7 @@ def main():
 
         elif user_choice == '2':
             # IF userChoice == 2 (Films)
-            print("\n--- Films Menu 🎬---")
+            print("\n--- Films Menu 🎬 ---")
             print("1. By Genre")
 
             films_choice = input("\nEnter your choice (1): ").strip()
