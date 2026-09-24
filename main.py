@@ -1,6 +1,19 @@
+def ask_go_back_to_main_menu():
+    # Ask the user if they want to return to the main menu.
+    # Returns True if yes, False if no (in which case the program will exit).
+    while True:
+        choice = input("\nGo back to Main Menu? (y/n): ").strip().lower()
+        if choice == 'y':
+            return True
+        elif choice == 'n':
+            return False
+        else:
+            print("Please enter 'y' or 'n'.")
+
+
 def main():
     # 1. START PROGRAM
-    
+
     # Data structure to hold movies by genre
     movies_by_genre = {
         '1': ("Action", ["Extraction", "Red Notice", "The Gray Man", "John Wick"]),
@@ -9,7 +22,7 @@ def main():
         '4': ("Horror", ["A Classic Horror Story", "The Conjuring", "Polong", "Veronica"]),
         '5': ("Romance", ["To All the Boys I've Loved Before", "The Kissing Booth", "Set It Up", "Plastic Beauty"])
     }
-    
+
     # Store user's saved titles
     my_list = []
 
@@ -35,15 +48,19 @@ def main():
         if user_choice == '1':
             # IF userChoice == 1 (Home)
             print("\n--- Trending Now ---")
-            print("1. Stranger Things Tales From 85 | New On Netflix")
-            print("2. POLONG | Top 10 on Netflix | New On Netflix")
-            print("3. Plastic Beauty | Top 10 On Netflix | New On Netflix")
+            print("1. Stranger Things Tales From 85 |                   | New On Netflix")
+            print("2. POLONG                        | Top 10 on Netflix | New On Netflix")
+            print("3. Plastic Beauty                | Top 10 On Netflix | New On Netflix")
+
+            if not ask_go_back_to_main_menu():
+                print("\nExiting program. Thank you!")
+                break
 
         elif user_choice == '2':
             # IF userChoice == 2 (Films)
             print("\n--- Films Menu ---")
             print("1. By Genre")
-            
+
             films_choice = input("\nEnter your choice (1): ").strip()
 
             if films_choice == '1':
@@ -54,15 +71,15 @@ def main():
                 print("3. Thriller")
                 print("4. Horror")
                 print("5. Romance")
-                
+
                 genre_choice = input("\nSelect a genre (1-5): ").strip()
-                
+
                 if genre_choice in movies_by_genre:
                     genre_name, movies = movies_by_genre[genre_choice]
                     print(f"\n--- {genre_name} Movies ---")
                     for idx, movie in enumerate(movies, start=1):
                         print(f"{idx}. {movie}")
-                    
+
                     # Option to add to My List
                     add_choice = input("\nDo you want to add a movie to My List? (Enter number or 'N' to skip): ").strip()
                     if add_choice.isdigit():
@@ -78,9 +95,13 @@ def main():
                             print("\nInvalid movie selection.")
                 else:
                     print("\nInvalid genre selection.")
-                
+
             else:
                 print("\nInvalid selection in Films menu.")
+
+            if not ask_go_back_to_main_menu():
+                print("\nExiting program. Thank you!")
+                break
 
         elif user_choice == '3':
             # IF userChoice == 3 (My List)
@@ -92,6 +113,10 @@ def main():
                 for idx, movie in enumerate(my_list, start=1):
                     print(f"{idx}. {movie}")
 
+            if not ask_go_back_to_main_menu():
+                print("\nExiting program. Thank you!")
+                break
+
         elif user_choice == '4':
             # IF userChoice == 4 (Exit)
             print("\nExiting program. Thank you!")
@@ -99,6 +124,7 @@ def main():
 
         else:
             print("\nInvalid choice. Please select a number from 1 to 4.")
+
 
 if __name__ == "__main__":
     main()
