@@ -7,6 +7,8 @@ MY_LIST_FILE = "my_list.json"
 # Text formatting for Film Titles and Synopses
 BOLD = "\033[1m"
 RESET = "\033[0m"
+RED = "\033[31m"
+
 
 def clean_saved_entry(entry):
     # Repair an old/corrupted My List entry saved by a previous buggy version of this script
@@ -97,9 +99,9 @@ def main():
     # Data structure for Home / Trending Movies: (Title, Synopsis, Tagline)
     trending_movies = [
         ("Stranger Things Tales From 85", "Unexplained mysteries and supernatural forces threaten Hawkins once again.", "New On Netflix"),
-        ("POLONG", "A woman turns to a dark supernatural entity for revenge, triggering terrifying events.", "Top 10 | New On Netflix"),
-        ("Plastic Beauty", "A woman's relentless pursuit of physical perfection leads down a dangerous path.", "Top 10 | New On Netflix"),
-        ("Leave the World Behind", "A family's quiet vacation is shattered by ominous apocalyptic events.", "Top 10 On Netflix"),
+        ("POLONG", "A woman turns to a dark supernatural entity for revenge, triggering terrifying events.", "New On Netflix | Top 10"),
+        ("Plastic Beauty", "A woman's relentless pursuit of physical perfection leads down a dangerous path.", "New On Netflix | Top 10"),
+        ("Leave the World Behind", "A family's quiet vacation is shattered by ominous apocalyptic events.", "Top 10"),
         ("Glass Onion", "Detective Benoit Blanc travels to a private Greek island to solve a twisted mystery.", "Must Watch"),
         ("Extraction", "A fearless black-ops mercenary embarks on a deadly rescue mission.", "Action Hit")
     ]
@@ -176,7 +178,7 @@ def main():
             # IF userChoice == 1 (Home)
             print("\n--- Trending Now 🔥 ---")
             for idx, (title, synopsis, badge) in enumerate(trending_movies, start=1):
-                print(f"{idx}. {BOLD}{title:<32}{RESET} | {badge}")
+                print(f"{idx}. {BOLD}{title:<32}{RESET} ➔ {RED}{badge}{RESET}")
                 print(f"   {synopsis}")
             
             offer_add_to_my_list(trending_movies, my_list)
